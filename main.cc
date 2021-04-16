@@ -10,7 +10,7 @@ run-cmd : ./main CDEF IJKL IJKL CDEF
 #include "utils.h"
 #include <stdio.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 	/* 引数処理 */
 	char* white_init  = argv[1];
 	char* black_init  = argv[2];
@@ -19,9 +19,11 @@ int main(int argc, char* argv[]) {
 
   std::cout << black_final << std::endl;
 
-	Board* focus;			// 処理中の盤面
+	Board *focus;			// 処理中の盤面
 	Coin state_tmp[14];
-	Board focus_tmp = Board(0, state_tmp, (char*)malloc(2 * sizeof(char)), NULL);	// 遷移した盤面
+	// Board focus_tmp = Board(0, state_tmp, (char*)malloc(2 * sizeof(char)), NULL);	// 遷移した盤面
+	// Board *focus_tmp = new Board(0, state_tmp, (char*)malloc(2 * sizeof(char)), NULL);	// 遷移した盤面
+	// Board focus_tmp(0, state_tmp, (char*)malloc(2 * sizeof(char)), NULL);	// 遷移した盤面
 
 	/* 変数宣言 */
 	int hash_tmp;
@@ -53,21 +55,27 @@ int main(int argc, char* argv[]) {
   // for (int i = 0; i < 14; i++) {
   //   std::cout << "state_tmp[" << i << "] : " << state_tmp[i] << std::endl;
   // }
-	// args2array(state_tmp, MASU, white_final, black_final);
+	args2array(state_tmp, MASU, white_final, black_final);
   // for (int i = 0; i < 14; i++) {
   //   std::cout << "state_tmp[" << i << "] : " << state_tmp[i] << std::endl;
   // }
 	hash_tmp   = make_hash(state_tmp);
 	Board fin  = Board(hash_tmp, state_tmp, NULL, NULL);
-	visit[fin.hash] = 1;
+	// Board fin  = Board(hash_tmp, NULL, NULL);
+	// visit[fin.hash] = 1;
 
 	/* INITの盤面をfocusにセット */
 	args2array(state_tmp, MASU, white_init, black_init);
+	// args2array(state_tmp, MASU, argv[1], argv[2]);
 	hash_tmp   = make_hash(state_tmp);
   std::cout << "init hash : " << hash_tmp << std::endl;
 	Board init = Board(hash_tmp, state_tmp, NULL, NULL);
+	// Board *init = new Board(hash_tmp, state_tmp, NULL, NULL);
+	// Board init = Board(hash_tmp, NULL, NULL);
+	visit[init.hash] = 1;
 
 	focus = &init;
+	// focus = init;
 
 	/* FINALの盤面を探索するループ */
 	while(1) {
@@ -84,49 +92,53 @@ int main(int argc, char* argv[]) {
 				// 隣接マスが存在し, かつそのマスが空いている場合
 				if (sq[i].neighbor_up		 != '\0' && focus->state[c2i(sq[i].neighbor_up)] == EMPTY) {
 					// 遷移先盤面のハッシュ値をindexとする visit[] が 0であるかチェック
-					if (checkVisit(focus, &focus_tmp, sq[i], sq[i].neighbor_up, i, visit) == 0) {
+/*
+					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_up, i, visit, board_queue) == 0) {
 						// visit[] が0である盤面を, queueにプッシュ
-						board_queue.push(focus_tmp);
-            visit[focus_tmp.hash] = 1;
-            printf("hash : %d\n", focus_tmp.hash);
-            printf("Board : %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", focus_tmp.state[0], focus_tmp.state[1], focus_tmp.state[2], focus_tmp.state[3],
-                                                                             focus_tmp.state[4], focus_tmp.state[5], focus_tmp.state[6], focus_tmp.state[7],
-                                                                             focus_tmp.state[8], focus_tmp.state[9], focus_tmp.state[10], focus_tmp.state[11],
-                                                                             focus_tmp.state[12], focus_tmp.state[13]);
+						board_queue.push(*focus_tmp);
+            visit[focus_tmp->hash] = 1;
+            printf("hash : %d\n", focus_tmp->hash);
+            printf("hash (focus) : %d\n", focus->hash);
+            printBoard(focus_tmp);
 					}
+          */
+          checkVisit(focus, sq[i], sq[i].neighbor_up, i, visit, board_queue);
 				}
 				if (sq[i].neighbor_down  != '\0' && focus->state[c2i(sq[i].neighbor_down)] == EMPTY) {
-					if (checkVisit(focus, &focus_tmp, sq[i], sq[i].neighbor_down, i, visit) == 0) {
-						board_queue.push(focus_tmp);
-            visit[focus_tmp.hash] = 1;
-            printf("hash : %d\n", focus_tmp.hash);
-            printf("Board : %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", focus_tmp.state[0], focus_tmp.state[1], focus_tmp.state[2], focus_tmp.state[3],
-                                                                             focus_tmp.state[4], focus_tmp.state[5], focus_tmp.state[6], focus_tmp.state[7],
-                                                                             focus_tmp.state[8], focus_tmp.state[9], focus_tmp.state[10], focus_tmp.state[11],
-                                                                             focus_tmp.state[12], focus_tmp.state[13]);
+/*
+					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_down, i, visit) == 0) {
+						board_queue.push(*focus_tmp);
+            visit[focus_tmp->hash] = 1;
+            printf("hash : %d\n", focus_tmp->hash);
+            printf("hash (focus) : %d\n", focus->hash);
+            printBoard(focus_tmp);
 					}
+*/
+          checkVisit(focus, sq[i], sq[i].neighbor_down, i, visit, board_queue);
 				}
 				if (sq[i].neighbor_left  != '\0' && focus->state[c2i(sq[i].neighbor_left)] == EMPTY) {
-					if (checkVisit(focus, &focus_tmp, sq[i], sq[i].neighbor_left, i, visit) == 0) {
-						board_queue.push(focus_tmp);
-            visit[focus_tmp.hash] = 1;
-            printf("hash : %d\n", focus_tmp.hash);
-            printf("Board : %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", focus_tmp.state[0], focus_tmp.state[1], focus_tmp.state[2], focus_tmp.state[3],
-                                                                             focus_tmp.state[4], focus_tmp.state[5], focus_tmp.state[6], focus_tmp.state[7],
-                                                                             focus_tmp.state[8], focus_tmp.state[9], focus_tmp.state[10], focus_tmp.state[11],
-                                                                             focus_tmp.state[12], focus_tmp.state[13]);
+/*
+					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_left, i, visit) == 0) {
+						board_queue.push(*focus_tmp);
+            visit[focus_tmp->hash] = 1;
+            printf("hash : %d\n", focus_tmp->hash);
+            printf("hash (focus) : %d\n", focus->hash);
+            printBoard(focus_tmp);
 					}
+*/
+          checkVisit(focus, sq[i], sq[i].neighbor_left, i, visit, board_queue);
 				}
 				if (sq[i].neighbor_right != '\0' && focus->state[c2i(sq[i].neighbor_right)] == EMPTY) {
-					if (checkVisit(focus, &focus_tmp, sq[i], sq[i].neighbor_right, i, visit) == 0) {
-						board_queue.push(focus_tmp);
-            visit[focus_tmp.hash] = 1;
-            printf("hash : %d\n", focus_tmp.hash);
-            printf("Board : %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n", focus_tmp.state[0], focus_tmp.state[1], focus_tmp.state[2], focus_tmp.state[3],
-                                                                             focus_tmp.state[4], focus_tmp.state[5], focus_tmp.state[6], focus_tmp.state[7],
-                                                                             focus_tmp.state[8], focus_tmp.state[9], focus_tmp.state[10], focus_tmp.state[11],
-                                                                             focus_tmp.state[12], focus_tmp.state[13]);
+/*
+					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_right, i, visit) == 0) {
+						board_queue.push(*focus_tmp);
+            visit[focus_tmp->hash] = 1;
+            printf("hash : %d\n", focus_tmp->hash);
+            printf("hash (focus) : %d\n", focus->hash);
+            printBoard(focus_tmp);
 					}
+*/
+          checkVisit(focus, sq[i], sq[i].neighbor_right, i, visit, board_queue);
 				}
 			}
 		}

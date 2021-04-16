@@ -1,12 +1,17 @@
 TARGET=main
+OBJ=utils
+CC=g++
 
 all: main play
 
-main: $(TARGET).cc utils.cc
-	g++ -o $@ $^
+main: $(TARGET).cc $(OBJ).cc
+	$(CC) -o $@ $^ -g
 
 play:
-	./main CDEF GHIJ GHIJ CDEF
+	./$(TARGET) CDEF GHIJ GHIJ CDEF
+
+gdb:
+	gdb --args $(TARGET) --CDEF --GHIJ --GHIJ --CDEF
 
 clean:
-	rm -f main utils.o
+	rm -f $(TARGET) $(OBJ).o

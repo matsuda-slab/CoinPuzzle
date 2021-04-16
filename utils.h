@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <queue>
 
 #define HASH_MAX 4782969					// 3 ^ 14 = 4782969
 
@@ -12,7 +13,8 @@ int make_hash(Coin* array);
 void args2array(Coin* array, const char* masu, char* white, char* black);
 int c2i(char name);
 char i2c(int num);
-int checkVisit(Board* focus, Board* focus_tmp, Square sq, char neighbor, int sq_num, int* visit);
+int checkVisit(Board* focus, Square sq, char neighbor, int sq_num, int* visit, std::queue<Board> board_queue);
+void printBoard(Board *board);
 
 class Board {
 	public:
@@ -22,18 +24,26 @@ class Board {
 		Board* parent;		// 親盤面
 
 		Board() {
+      printf("constructor (args : 0) called\n");
       this->hash   = 0;
-      this->state  = (Coin*)malloc(14 * sizeof(Coin));
+      // this->state  = (Coin*)malloc(14 * sizeof(Coin));
       // this->move   = (char*)malloc(2 * sizeof(char));
       this->parent = NULL;
     }
 		 	 
 		Board(int hash, Coin* state, char* move, Board* parent) {
+		// Board(int hash, char* move, Board* parent) {
+      printf("constructor (args : 4) called\n");
 			this->hash	 = hash;
+      this->state  = (Coin*)malloc(14 * sizeof(Coin));
 			this->state  = state;
 			// this->move   = move;
 			this->parent = parent;
 		}
+
+    // Board(const Board %obj) {
+
+    // }
 
 		void setHash() {
 			this->hash = make_hash(this->state);
