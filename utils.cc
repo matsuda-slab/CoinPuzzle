@@ -70,36 +70,38 @@ char i2c(int num) {
   return 'Z';
 }
 
-int checkVisit(Board* focus, Square sq, char neighbor, int sq_num, int* visit, std::queue<Board> board_queue) {
+int checkVisit(Board* focus_tmp, Square sq, char neighbor, int sq_num, int* visit, std::queue<Board> &board_queue) {
   // 遷移
-	Board focus_tmp = *focus;     // Copy Constructor
-  printBoard(focus);
-  printBoard(&focus_tmp);
+  // printBoard(&focus_tmp);
   int idx;
   if (neighbor == sq.neighbor_up) idx = c2i(sq.neighbor_up);
   else if (neighbor == sq.neighbor_down) idx = c2i(sq.neighbor_down);
   else if (neighbor == sq.neighbor_left) idx = c2i(sq.neighbor_left);
   else if (neighbor == sq.neighbor_right) idx = c2i(sq.neighbor_right);
 
-  focus_tmp.state[idx] = focus_tmp.state[sq_num];
-  focus_tmp.state[sq_num] = EMPTY;
+  focus_tmp->state[idx] = focus_tmp->state[sq_num];
+  focus_tmp->state[sq_num] = EMPTY;
 
   // 遷移先の盤面のハッシュ値を計算 & セット
-  focus_tmp.setHash();
-  printf("focus_tmp.hash : %d\n", focus_tmp.hash);
+  focus_tmp->setHash();
+  printf("focus_tmp->hash : %d\n", focus_tmp->hash);
 
   // 親盤面に現在の盤面をセット
-  focus_tmp.parent = focus;
+  focus_tmp->parent = focus_tmp;
+  printf("focus_tmp.parent : %d\n", focus_tmp->parent);
 
   // 遷移の仕方を記憶
   // std::cout << i2c(sq_num) << std::endl;
-  focus_tmp.move[0] = i2c(sq_num);
-  focus_tmp.move[1] = neighbor;
+  focus_tmp->move[0] = i2c(sq_num);
+  focus_tmp->move[1] = neighbor;
   
+  printf("queue size : %d\n", board_queue.size());
   // そのハッシュ値をindexとする visit[] が 0であるかチェック
-  if (visit[focus_tmp.hash] == 0) {
-    board_queue.push(focus_tmp);
-    visit[focus_tmp.hash] = 1;
+  if (visit[focus_tmp->hash] == 0) {
+    board_queue.push(*focus_tmp);
+    // printf("%d pushed\n", focus_tmp->hash);
+    printf("pushed : "); printBoard(focus_tmp);
+    visit[focus_tmp->hash] = 1;
     return 0;
   }
 

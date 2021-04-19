@@ -13,7 +13,7 @@ int make_hash(Coin* array);
 void args2array(Coin* array, const char* masu, char* white, char* black);
 int c2i(char name);
 char i2c(int num);
-int checkVisit(Board* focus, Square sq, char neighbor, int sq_num, int* visit, std::queue<Board> board_queue);
+int checkVisit(Board* focus_tmp, Square sq, char neighbor, int sq_num, int* visit, std::queue<Board> &board_queue);
 void printBoard(Board *board);
 
 class Board {
@@ -48,6 +48,12 @@ class Board {
 		void setHash() {
 			this->hash = make_hash(this->state);
 		}
+
+    void setState(Coin *state) {
+      for (int i = 0; i < 14; i++) {
+        this->state[i] = state[i];
+      }
+    }
 };
 
 class Square {

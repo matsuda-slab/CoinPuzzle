@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
   std::cout << black_final << std::endl;
 
 	Board *focus;			// 処理中の盤面
+  Board *focus_tmp;
 	Coin state_tmp[14];
 	// Board focus_tmp = Board(0, state_tmp, (char*)malloc(2 * sizeof(char)), NULL);	// 遷移した盤面
 	// Board *focus_tmp = new Board(0, state_tmp, (char*)malloc(2 * sizeof(char)), NULL);	// 遷移した盤面
@@ -77,9 +78,11 @@ int main(int argc, char *argv[]) {
 	focus = &init;
 	// focus = init;
 
+  int cnt = 0;
 	/* FINALの盤面を探索するループ */
 	while(1) {
-
+    printf("roop %d\n", cnt);
+    // printf("focus : "); printBoard(focus);
 		/* 14マス全てに対し, コインがあるかチェックするループ */
 		for (int i = 0; i < 14; i++) {
       // std::cout << "test " << i << std::endl;
@@ -91,6 +94,7 @@ int main(int argc, char *argv[]) {
         // std::cout << "hit!!" << std::endl;
 				// 隣接マスが存在し, かつそのマスが空いている場合
 				if (sq[i].neighbor_up		 != '\0' && focus->state[c2i(sq[i].neighbor_up)] == EMPTY) {
+          // Board focus_tmp = *focus;     // Copy Constructor
 					// 遷移先盤面のハッシュ値をindexとする visit[] が 0であるかチェック
 /*
 					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_up, i, visit, board_queue) == 0) {
@@ -102,81 +106,83 @@ int main(int argc, char *argv[]) {
             printBoard(focus_tmp);
 					}
           */
-          checkVisit(focus, sq[i], sq[i].neighbor_up, i, visit, board_queue);
-				}
-				if (sq[i].neighbor_down  != '\0' && focus->state[c2i(sq[i].neighbor_down)] == EMPTY) {
-/*
-					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_down, i, visit) == 0) {
-						board_queue.push(*focus_tmp);
-            visit[focus_tmp->hash] = 1;
-            printf("hash : %d\n", focus_tmp->hash);
-            printf("hash (focus) : %d\n", focus->hash);
-            printBoard(focus_tmp);
-					}
-*/
-          checkVisit(focus, sq[i], sq[i].neighbor_down, i, visit, board_queue);
-				}
-				if (sq[i].neighbor_left  != '\0' && focus->state[c2i(sq[i].neighbor_left)] == EMPTY) {
-/*
-					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_left, i, visit) == 0) {
-						board_queue.push(*focus_tmp);
-            visit[focus_tmp->hash] = 1;
-            printf("hash : %d\n", focus_tmp->hash);
-            printf("hash (focus) : %d\n", focus->hash);
-            printBoard(focus_tmp);
-					}
-*/
-          checkVisit(focus, sq[i], sq[i].neighbor_left, i, visit, board_queue);
-				}
-				if (sq[i].neighbor_right != '\0' && focus->state[c2i(sq[i].neighbor_right)] == EMPTY) {
-/*
-					if (checkVisit(focus, *focus_tmp, sq[i], sq[i].neighbor_right, i, visit) == 0) {
-						board_queue.push(*focus_tmp);
-            visit[focus_tmp->hash] = 1;
-            printf("hash : %d\n", focus_tmp->hash);
-            printf("hash (focus) : %d\n", focus->hash);
-            printBoard(focus_tmp);
-					}
-*/
-          checkVisit(focus, sq[i], sq[i].neighbor_right, i, visit, board_queue);
-				}
-			}
-		}
-		/* queue から盤面を取り出し, focusにセット */
+          printf("may move up\n");
+          // printf("before checkVisit :"); printBoard(focus_tmp);
+          if (!checkVisit(focus_tmp, sq[i], sq[i].neighbor_up, i, visit, board_queue)) {
+            // printf("back : "); printBoard(&(board_queue.back()));
+          }
+          // printf("after checkVisit :"); printBoard(focus_tmp);
+        }
+        if (sq[i].neighbor_down  != '\0' && focus->state[c2i(sq[i].neighbor_down)] == EMPTY) {
+          // Board focus_tmp = *focus;     // Copy Constructor
+          printf("may move down\n");
+          // printf("before checkVisit :"); printBoard(focus_tmp);
+          if (!checkVisit(focus_tmp, sq[i], sq[i].neighbor_down, i, visit, board_queue)) {
+            // printf("back : "); printBoard(&(board_queue.back()));
+          };
+          // printf("after checkVisit :"); printBoard(focus_tmp);
+        }
+        if (sq[i].neighbor_left  != '\0' && focus->state[c2i(sq[i].neighbor_left)] == EMPTY) {
+          // Board focus_tmp = *focus;     // Copy Constructor
+          printf("may move left\n");
+          // printf("before checkVisit :"); printBoard(focus_tmp);
+          if (!checkVisit(focus_tmp, sq[i], sq[i].neighbor_left, i, visit, board_queue)) {
+            // printf("back : "); printBoard(&(board_queue.back()));
+          };
+          // printf("after checkVisit :"); printBoard(focus_tmp);
+        }
+        if (sq[i].neighbor_right != '\0' && focus->state[c2i(sq[i].neighbor_right)] == EMPTY) {
+          // Board focus_tmp = *focus;     // Copy Constructor
+          printf("may move right\n");
+          // printf("before checkVisit :"); printBoard(focus_tmp);
+          if (!checkVisit(focus_tmp, sq[i], sq[i].neighbor_right, i, visit, board_queue)) {
+            // printf("back : "); printBoard(&(board_queue.back()));
+          };
+          // printf("after checkVisit :"); printBoard(focus_tmp);
+          printf("\n");
+        }
+        // printf("back (out of if) : "); printBoard(&(board_queue.back()));
+      }
+    }
+    /* queue から盤面を取り出し, focusにセット */
     // std::cout << "set focus" << std::endl;
-		*focus = board_queue.front();
+    *focus = board_queue.front();
     // std::cout << "seted" << std::endl;
-		board_queue.pop();
+    // printf("before pop : "); printBoard(&(board_queue.front()));
+    board_queue.pop();
+    // printf("after pop : "); printBoard(&(board_queue.front()));
     // std::cout << "poped" << std::endl;
 
-		/* FINAL盤面にたどり着いたらループを抜ける */
-		// ここで, finの move と parent が決まる
-		if (focus->hash == fin.hash) {
+    /* FINAL盤面にたどり着いたらループを抜ける */
+    // ここで, finの move と parent が決まる
+    if (focus->hash == fin.hash) {
       std::cout << "found!!" << std::endl;
-			fin.parent  = focus;
-			fin.move[0] = focus->move[0];
-			fin.move[1] = focus->move[1];
-			break;
-		}
-	}
+      fin.parent  = focus;
+      fin.move[0] = focus->move[0];
+      fin.move[1] = focus->move[1];
+      break;
+    }
 
-	// /* FINALの盤面を focus にセット */
-	// *focus = fin;
+    cnt++;
+  }
 
-	/* FINALの盤面までの遷移を出力するループ */
-	// while(1) {
+  // /* FINALの盤面を focus にセット */
+  // *focus = fin;
 
-	// 	/* focusノードが親盤面を持つなら親盤面からの遷移を出力. 親盤面がないなら終了 */ 
-	// 	if (focus->parent != NULL) {
-	// 		std::cout << focus->move << std::endl;
+  /* FINALの盤面までの遷移を出力するループ */
+  // while(1) {
 
-	// 	/* focus に, 親盤面をセット */
-	// 		focus = focus->parent;
-	// 	}
-	// 	else { 
-	// 		break;
-	// 	}
-	// }
+  // 	/* focusノードが親盤面を持つなら親盤面からの遷移を出力. 親盤面がないなら終了 */ 
+  // 	if (focus->parent != NULL) {
+  // 		std::cout << focus->move << std::endl;
 
-	return 0;
+  // 	/* focus に, 親盤面をセット */
+  // 		focus = focus->parent;
+  // 	}
+  // 	else { 
+  // 		break;
+  // 	}
+  // }
+
+  return 0;
 }
