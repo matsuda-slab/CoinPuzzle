@@ -1,0 +1,2 @@
+init_white CDEF
+init_black IJKL

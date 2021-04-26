@@ -13,48 +13,16 @@ int make_hash(Coin* array);
 void args2array(Coin* array, const char* masu, char* white, char* black);
 int c2i(char name);
 char i2c(int num);
-int checkVisit(Board* focus_tmp, Square sq, char neighbor, int sq_num, int* visit, std::queue<Board> &board_queue);
+int checkVisit(Board* focus_tmp, Square sq, char neighbor, int sq_num, \
+    int* visit, std::queue<Board> &board_queue);
 void printBoard(Board *board);
+int bitcheck(Coin* state1, Coin* state2);
 
-class Board {
-	public:
-		int hash;				// 盤面を一意に表すハッシュ値
-		Coin *state;	// 各マスの状態を表す配列
-		char move[2];		// 親盤面からどう移動したかを表す文字列
-		Board* parent;		// 親盤面
-
-		Board() {
-      printf("constructor (args : 0) called\n");
-      this->hash   = 0;
-      // this->state  = (Coin*)malloc(14 * sizeof(Coin));
-      // this->move   = (char*)malloc(2 * sizeof(char));
-      this->parent = NULL;
-    }
-		 	 
-		Board(int hash, Coin* state, char* move, Board* parent) {
-		// Board(int hash, char* move, Board* parent) {
-      printf("constructor (args : 4) called\n");
-			this->hash	 = hash;
-      this->state  = (Coin*)malloc(14 * sizeof(Coin));
-			this->state  = state;
-			// this->move   = move;
-			this->parent = parent;
-		}
-
-    // Board(const Board %obj) {
-
-    // }
-
-		void setHash() {
-			this->hash = make_hash(this->state);
-		}
-
-    void setState(Coin *state) {
-      for (int i = 0; i < 14; i++) {
-        this->state[i] = state[i];
-      }
-    }
-};
+typedef struct Board {
+  int hash;
+  Coin state[14];
+  char route[512] = {'\0'};
+} Board;
 
 class Square {
 	public:
