@@ -31,7 +31,7 @@ cvs = tk.Canvas(animation, width=WIDTH, height=HEIGHT, bg="#d6eaff")
 # ルート要素に追加
 cvs.pack()
 
-# create_rectangle(左上x, 左上y, 右下x, 右下y)
+# 矩形の生成 (左上x, 左上y, 右下x, 右下y)
 for masu in masu_coords:
     rects.append(cvs.create_rectangle(masu_coords[masu][0]-25, \
                                       masu_coords[masu][1]-25, \
