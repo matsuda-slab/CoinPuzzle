@@ -9,3 +9,6 @@ You can see how coins are moved visually.
 ## Usage
 Run ```make``` to compile and run main.
 Then coin moving animation will start.
+
+### Capture
+![animation image](images/capture.png)
